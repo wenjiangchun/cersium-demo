@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Hello World!</title>
+    <!--<script src="../Build/CesiumUnminified/Cesium.js"></script>-->
+    <script src="res/cesium/Build/Cesium/Cesium.js"></script>
+    <style>
+        @import url(res/cesium/Build/Cesium/Widgets/widgets.css);
+        html, body, #cesiumContainer {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<div id="loadingIndicator" class="loadingIndicator"></div>
+<script>
+    Cesium.Ion.defaultAccessToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZjA2ZDQ2ZS02NTA4LTQ2NTItODE1My1kZjE3MjBkMjFkNzAiLCJpZCI6NDM5NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0MDcyNzI4Nn0.L7P8pJponZfYjdsGnEw2hIHd2AN0h-SuYl6XvzOwLeA';
+    var objectDimensions = {
+        'x': 71492000.0,
+        'y': 71492000.0,
+        'z': 66864000.0
+    }
+    var ellipsoid = Cesium.freezeObject(new Cesium.Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
+
+    Cesium.Ellipsoid.WGS84 = ellipsoid;
+    var globeParam = new Cesium.Globe(ellipsoid);
+    var mapProjectionParam = new Cesium.GeographicProjection(ellipsoid);
+    var terrainProviderParam = new Cesium.EllipsoidTerrainProvider({ellipsoid: ellipsoid});
+
+    var imageryProvider = new Cesium.WebMapServiceImageryProvider({
+        url: "https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/jupiter/jupiter_simp_cyl.map&",
+        parameters: {format: 'image/jpeg'},
+        layers: ["CASSINI"],
+        credit: 'USGS @ wms.wr.usgs.gov',
+        ellipsoid: ellipsoid,
+        enablePickFeatures: false
+    });
+
+    var viewerOptions = {
+        mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).
+        globe: globeParam, //  The globe to use in the scene. (class : Globe)
+        baseLayerPicker: false,
+        selectionIndicator: false,
+        timeline: false, // for files which contains the temporal dimension
+        animation: false, // for animation which displayed with the time
+        navigationInstructionsInitiallyVisible: false,
+        trashButton: true,
+        showSystems: true,
+        tools: true,
+        VOData: true,
+        geocoder : false
+    };
+    //viewerOptions.skyAtmosphere = new Cesium.SkyAtmosphere(ellipsoid, {show: false} ); // atm visualisation.
+    viewerOptions.skyAtmosphere = false; // atm visualisation.
+    viewerOptions.skyBox = new Cesium.SkyBox({show: false}); // star visualisation.
+    var viewer = new Cesium.Viewer('cesiumContainer',viewerOptions);
+    var scene = viewer.scene;
+    //var context = scene.context;
+
+
+    scene.globe.baseColor = Cesium.Color.BLACK;
+
+
+    scene.fog.enabled = false;
+    scene.moon.show = false;
+    scene.sun.show = false;
+    viewer.imageryLayers.removeAll(true);
+    viewer.imageryLayers.addImageryProvider(imageryProvider);
+
+
+
+
+</script>
+</body>
+</html>

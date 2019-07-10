@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Hello World!</title>
+    <!--<script src="../Build/CesiumUnminified/Cesium.js"></script>-->
+    <script src="res/cesium/Build/Cesium/Cesium.js"></script>
+    <style>
+        @import url(res/cesium/Build/Cesium/Widgets/widgets.css);
+        html, body, #cesiumContainer {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<div id="loadingIndicator" class="loadingIndicator"></div>
+<button onclick="reset()">更新位置</button>
+<script>
+    Cesium.Ion.defaultAccessToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZjA2ZDQ2ZS02NTA4LTQ2NTItODE1My1kZjE3MjBkMjFkNzAiLCJpZCI6NDM5NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0MDcyNzI4Nn0.L7P8pJponZfYjdsGnEw2hIHd2AN0h-SuYl6XvzOwLeA';
+    var viewer = new Cesium.Viewer('cesiumContainer',{
+        shouldAnimate : true
+    });
+    var scene = viewer.scene;
+
+    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+        Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0));
+    var model = scene.primitives.add(Cesium.Model.fromGltf({
+        id:"myModel",
+        url : '/res/3d/tc.glb',
+        modelMatrix : modelMatrix,
+        scale : 20.0,
+        shouldAnimate : true,
+        allowPicking:true
+    }));
+
+    viewer.camera.flyTo({
+        destination :  Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 200.0), // 设置位置
+        orientation: {
+            heading : Cesium.Math.toRadians(20.0), // 方向
+            pitch : Cesium.Math.toRadians(-90.0),// 倾斜角度
+            roll : 0
+        }
+    });
+    Cesium.when(model.readyPromise).then(function(model) {
+        model.activeAnimations.addAll({
+            multiplier : 0.5
+        });
+    }).otherwise(function(error){
+        window.alert(error);
+    });
+    viewer._cesiumWidget._creditContainer.style.display = "none";
+
+    function reset() {
+        var position = Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899415, 200.0);//(经度，纬度，高程)
+    }
+
+</script>
+</body>
+</html>
