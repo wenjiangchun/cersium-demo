@@ -9,38 +9,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <title>Hello World!</title>
     <!--<script src="../Build/CesiumUnminified/Cesium.js"></script>-->
-    <script src="res/cesium/Build/Cesium/Cesium.js"></script>
     <style>
         @import url(res/cesium/Build/Cesium/Widgets/widgets.css);
+        @import url(res/bootstrap/css/bootstrap.css);
         html, body, #cesiumContainer {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
         }
+
+        #eye {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            bottom: 200px;
+            right: 10px;
+            z-index: 999;
+            background: red;
+            border: solid white 2px;
+        }
+        #toolbar {
+            position: absolute;
+            width: 300px;
+            height: 50px;
+            top: 20px;
+            left: 10px;
+            z-index: 999;
+        }
     </style>
+    <script src="res/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="res/bootstrap/js/bootstrap.js"></script>
+
 </head>
 <body>
 <div id="cesiumContainer"></div>
-<div id="loadingIndicator" class="loadingIndicator"></div>
-<button onclick="reset()">更新位置</button>
+<div id="eye"></div>
+<div id="toolbar">
+    <p><button type="button" class="btn btn-primary" onclick="move(1)">前</button> <button type="button" class="btn btn-primary" onclick="move(0)">后</button></p>
+    <p><button type="button" class="btn btn-primary" onclick="rolate(0)">左</button> <button type="button" class="btn btn-primary" onclick="rolate(1)">右</button></p>
+    <p><button type="button" class="btn btn-primary" onclick="testMove()">测试连续</button> </p>
+</div>
 <script>
     Cesium.Ion.defaultAccessToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZjA2ZDQ2ZS02NTA4LTQ2NTItODE1My1kZjE3MjBkMjFkNzAiLCJpZCI6NDM5NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0MDcyNzI4Nn0.L7P8pJponZfYjdsGnEw2hIHd2AN0h-SuYl6XvzOwLeA';
     var viewer = new Cesium.Viewer('cesiumContainer',{
         shouldAnimate : true
     });
-    var scene = viewer.scene;
 
-    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
-        Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0));
+    var scene = viewer.scene;
+    var initPosition = Cesium.Cartesian3.fromDegrees(116.23, 39.54, 0.0);
+    var initX = initPosition.x;
+    var initY = initPosition.y;
+    var initZ = initPosition.z;
+    var ellipsoid=viewer.scene.globe.ellipsoid;
+
+    var initheading = 0;
+    var initpitch = 0;
+    var initroll = 0;
+    var headingPitchRoll = new Cesium.HeadingPitchRoll(initheading, initpitch, initroll);
+    /*var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+        Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0));*/
+    var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(initPosition, headingPitchRoll, Cesium.Ellipsoid.WGS84, Cesium.Transforms.eastNorthUpToFixedFrame, new Cesium.Matrix4());
     var model = scene.primitives.add(Cesium.Model.fromGltf({
         id:"myModel",
-        url : '/res/3d/tc.glb',
+        //url : '/res/3d/tc.glb',
+        url : '/res/3d/tc1.glb',
+        //url : '/res/cesium/Apps/SampleData/models/GroundVehicle/GroundVehicle.glb',
         modelMatrix : modelMatrix,
-        scale : 20.0,
-        shouldAnimate : true,
+        scale : 5.0,
+        shouldAnimate : false,
         allowPicking:true
     }));
 
     viewer.camera.flyTo({
-        destination :  Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 200.0), // 设置位置
+        //destination :  Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 200.0), // 设置位置
+        destination :  createCartesian3(new Cesium.Cartesian3(initX, initY, initZ), Cesium.Ellipsoid.WGS84, 200),
         orientation: {
             heading : Cesium.Math.toRadians(20.0), // 方向
             pitch : Cesium.Math.toRadians(-90.0),// 倾斜角度
@@ -49,7 +89,7 @@
     });
     Cesium.when(model.readyPromise).then(function(model) {
         model.activeAnimations.addAll({
-            multiplier : 0.5
+            loop : Cesium.ModelAnimationLoop.REPEAT
         });
     }).otherwise(function(error){
         window.alert(error);
@@ -59,7 +99,154 @@
     function reset() {
         var position = Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899415, 200.0);//(经度，纬度，高程)
     }
+    var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(
+        function (click) {
+            var pick = scene.pick(click.position);
+            if (Cesium.defined(pick)){
+               if (pick.id === "myModel" && pick.node.name === "ChemCam") {
+                   console.log(pick.node.name)
+                   var node = model.getNode('ChemCam');
+                   //node.matrix = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(5.0, 1.0, 1.0), node.matrix);
+                   node.show = true;
+               }
+            }
+    },
+    Cesium.ScreenSpaceEventType.LEFT_CLICK
+    );
 
+    //添加鹰眼
+     function EagleEye(viewer, containerId){
+        this._ref_viewer = viewer;
+        this._viewer = new Cesium.Viewer(containerId,{
+            animation: false,
+            baseLayerPicker: false,
+            fullscreenButton: false,
+            geocoder: false,
+            homeButton: false,
+            sceneModePicker: false,
+            selectionIndicator: false,
+            timeline: false,
+            navigationHelpButton: false,
+            infoBox: false,
+            navigationInstructionsInitiallyVisible: false
+        });
+        this.init = function() {
+            this._viewer._cesiumWidget._creditContainer.style.display = "none";
+            var control = this._viewer.scene.screenSpaceCameraController;
+            control.enableRotate = false;
+            control.enableTranslate = false;
+            control.enableZoom = false;
+            control.enableTilt = false;
+            control.enableLook = false;
+            var that = this;
+            this._ref_viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(0, 0),
+                label: {
+                    text: new Cesium.CallbackProperty(function(){
+                        that.synViewer();
+                        return "";
+                    }, true)
+                }
+            });
+        };
+        this.synViewer = function() {
+            //获取模型位置
+
+            //设置偏移量
+            this._viewer.camera.flyTo({
+                //destination : Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899415, 50.0),
+                destination : createCartesian3(new Cesium.Cartesian3(initX, initY, initZ), Cesium.Ellipsoid.WGS84, 10),
+                orientation : {
+                    heading : Cesium.Math.toRadians(initheading),
+                    pitch : Cesium.Math.toRadians(-10),
+                    roll : Cesium.Math.toRadians(-10)
+                },
+                duration: 0.0
+            });
+        };
+      this.init();
+    }
+    var eagleEye = new EagleEye(viewer, "eye");
+
+
+
+     function rolate(v) {
+         /*var m1 = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Matrix4.getTranslation(model.modelMatrix, new Cesium.Cartesian3()), Cesium.Ellipsoid.WGS84, new Cesium.Matrix4());
+         var m3 = Cesium.Matrix4.multiply(Cesium.Matrix4.inverse(m1, new Cesium.Matrix4()), model.modelMatrix, new Cesium.Matrix4());
+         var mat3 = Cesium.Matrix4.getRotation(m3, new Cesium.Matrix3());
+         // 计算四元数
+         var q = Cesium.Quaternion.fromRotationMatrix(mat3);
+         // 计算旋转角(弧度)
+         var hpr = Cesium.HeadingPitchRoll.fromQuaternion(q);
+         // 得到角度
+         var heading = Cesium.Math.toDegrees(hpr.heading);*/
+         var heading;
+         if (v == 0) {
+             if ((initheading - 10)< 0) {
+                 heading = 360;
+             } else {
+                 heading = initheading - 10;
+             }
+         } else {
+             if ((initheading + 10)> 360) {
+                 heading = 0;
+             } else {
+                 heading = initheading + 10;
+             }
+         }
+         //var heading = Cesium.Math.toDegrees(heading);
+         initheading = heading;
+         heading = Cesium.Math.toRadians(heading);
+         var pitch = 0;
+         var roll = 0;
+         //var position = Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0)
+         //var position = Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0)
+          model.modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(createCartesian3(new Cesium.Cartesian3(initX, initY, initZ), Cesium.Ellipsoid.WGS84, 0), new Cesium.HeadingPitchRoll(heading, pitch, roll), Cesium.Ellipsoid.WGS84, Cesium.Transforms.eastNorthUpToFixedFrame, new Cesium.Matrix4());
+         //eagleEye.synViewer();
+     }
+
+
+
+     function move(v) {
+         var step = 50;
+         if (v == 0) {
+             step = -1;
+         }
+         var xMargin = Math.cos(Cesium.Math.toRadians(initheading)) * step;
+         var yMargin = Math.sin(Cesium.Math.toRadians(initheading)) * step;
+         initX = initX + xMargin;
+         initY = initY + yMargin;
+         var xyz = new Cesium.Cartesian3(initX, initY, initZ);
+         //var wgs84 = Cesium.Ellipsoid.WGS84.cartesianToCartographic(xyz);
+         //var position = Cesium.Cartesian3.fromDegrees(lan, lat, 0.0);
+         model.modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(createCartesian3(xyz, Cesium.Ellipsoid.WGS84, 0), new Cesium.HeadingPitchRoll(initheading, 0, 0), Cesium.Ellipsoid.WGS84, Cesium.Transforms.eastNorthUpToFixedFrame, new Cesium.Matrix4());
+         //eagleEye.synViewer();
+     }
+
+     function createCartesian3(cartesian3, ellipsoid, height) {
+         var cartographic=ellipsoid.cartesianToCartographic(cartesian3);
+         var lat=Cesium.Math.toDegrees(cartographic.latitude);
+         var lng=Cesium.Math.toDegrees(cartographic.longitude);
+         var alt=cartographic.height;
+         return Cesium.Cartesian3.fromDegrees(lng, lat, height);
+     }
+
+
+     function testMove() {
+         var timesRun = 0;
+         var interval = setInterval(function(){
+             timesRun += 1;
+             if(timesRun === 120){
+                 model.shouldAnimate=false;
+                 viewer.shouldAnimate=false;
+                 clearInterval(interval);
+             }
+             viewer.shouldAnimate=true;
+             model.shouldAnimate=true;
+             move(0);
+         }, 100);
+     }
 </script>
 </body>
 </html>
