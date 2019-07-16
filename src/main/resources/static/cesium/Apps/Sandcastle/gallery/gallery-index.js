@@ -86,7 +86,7 @@ var gallery_demos = [{
   "img": "ArcGIS MapServer.jpg"
 }, {
   "name": "ArcGIS Tiled Elevation Terrain",
-  "isNew": true,
+  "isNew": false,
   "img": "ArcGIS Tiled Elevation Terrain.jpg"
 }, {
   "name": "ArcticDEM",
@@ -150,7 +150,7 @@ var gallery_demos = [{
   "img": "CZML Model - Node Transformations.jpg"
 }, {
   "name": "CZML Model Articulations",
-  "isNew": true,
+  "isNew": false,
   "img": "CZML Model Articulations.jpg"
 }, {
   "name": "CZML Path",
@@ -314,7 +314,7 @@ var gallery_demos = [{
   "img": "Earth at Night.jpg"
 }, {
   "name": "Export KML",
-  "isNew": true,
+  "isNew": false,
   "img": "Export KML.jpg"
 }, {
   "name": "GeoJSON and TopoJSON",
@@ -404,6 +404,10 @@ var gallery_demos = [{
   "name": "Labels",
   "isNew": false,
   "img": "Labels.jpg"
+}, {
+  "name": "Labels SDF",
+  "isNew": false,
+  "img": "Labels SDF.jpg"
 }, {
   "name": "LensFlare",
   "isNew": false,
@@ -592,5 +596,239 @@ var gallery_demos = [{
   "name": "Z-Indexing Geometry",
   "isNew": false,
   "img": "Z-Indexing Geometry.jpg"
+}, {
+  "name": "development/3D Models",
+  "isNew": false,
+  "img": "development/3D Models.jpg"
+}, {
+  "name": "development/3D Models Articulations",
+  "isNew": false,
+  "img": "development/3D Models Articulations.jpg"
+}, {
+  "name": "development/3D Models Instancing",
+  "isNew": false,
+  "img": "development/3D Models Instancing.jpg"
+}, {
+  "name": "development/3D Models Node Explorer",
+  "isNew": false,
+  "img": "development/3D Models Node Explorer.jpg"
+}, {
+  "name": "development/3D Tiles Performance Testing",
+  "isNew": false
+}, {
+  "name": "development/BillboardClampToGround",
+  "isNew": false
+}, {
+  "name": "development/Billboards",
+  "isNew": false,
+  "img": "development/Billboards.jpg"
+}, {
+  "name": "development/Billboards Instancing",
+  "isNew": false,
+  "img": "development/Billboards Instancing.jpg"
+}, {
+  "name": "development/Box",
+  "isNew": false,
+  "img": "development/Box.jpg"
+}, {
+  "name": "development/Box Outline",
+  "isNew": false,
+  "img": "development/Box Outline.jpg"
+}, {
+  "name": "development/Circle",
+  "isNew": false,
+  "img": "development/Circle.jpg"
+}, {
+  "name": "development/Circle Outline",
+  "isNew": false,
+  "img": "development/Circle Outline.jpg"
+}, {
+  "name": "development/Coplanar Polygon",
+  "isNew": false,
+  "img": "development/Coplanar Polygon.jpg"
+}, {
+  "name": "development/Coplanar Polygon Outline",
+  "isNew": false,
+  "img": "development/Coplanar Polygon Outline.jpg"
+}, {
+  "name": "development/Corridor",
+  "isNew": false,
+  "img": "development/Corridor.jpg"
+}, {
+  "name": "development/Corridor Outline",
+  "isNew": false,
+  "img": "development/Corridor Outline.jpg"
+}, {
+  "name": "development/Cylinder",
+  "isNew": false,
+  "img": "development/Cylinder.jpg"
+}, {
+  "name": "development/Cylinder Outline",
+  "isNew": false,
+  "img": "development/Cylinder Outline.jpg"
+}, {
+  "name": "development/Display Conditions",
+  "isNew": false
+}, {
+  "name": "development/Ellipse",
+  "isNew": false,
+  "img": "development/Ellipse.jpg"
+}, {
+  "name": "development/Ellipse Outline",
+  "isNew": false,
+  "img": "development/Ellipse Outline.jpg"
+}, {
+  "name": "development/Ellipsoid",
+  "isNew": false,
+  "img": "development/Ellipsoid.jpg"
+}, {
+  "name": "development/Ellipsoid Outline",
+  "isNew": false,
+  "img": "development/Ellipsoid Outline.jpg"
+}, {
+  "name": "development/Ellipsoid Surface",
+  "isNew": false,
+  "img": "development/Ellipsoid Surface.jpg"
+}, {
+  "name": "development/Fog",
+  "isNew": false
+}, {
+  "name": "development/Frustum",
+  "isNew": false
+}, {
+  "name": "development/Geometry Offset Attribute",
+  "isNew": false,
+  "img": "development/Geometry Offset Attribute.jpg"
+}, {
+  "name": "development/Geometry Offset Attribute box cylinder ellipsoid",
+  "isNew": false,
+  "img": "development/Geometry Offset Attribute box cylinder ellipsoid.jpg"
+}, {
+  "name": "development/Geometry and Appearances",
+  "isNew": false,
+  "img": "development/Geometry and Appearances.jpg"
+}, {
+  "name": "development/Ground Polyline Material",
+  "isNew": false,
+  "img": "development/Ground Polyline Material.jpg"
+}, {
+  "name": "development/Ground Primitive",
+  "isNew": false,
+  "img": "development/Ground Primitive.jpg"
+}, {
+  "name": "development/Ground Primitive Materials",
+  "isNew": false,
+  "img": "development/Ground Primitive Materials.jpg"
+}, {
+  "name": "development/Labels",
+  "isNew": false,
+  "img": "development/Labels.jpg"
+}, {
+  "name": "development/Many Clipping Planes",
+  "isNew": false,
+  "img": "development/Many Clipping Planes.jpg"
+}, {
+  "name": "development/Material",
+  "isNew": false,
+  "img": "development/Material.jpg"
+}, {
+  "name": "development/Multiple Shadows",
+  "isNew": false
+}, {
+  "name": "development/Per Instance Color",
+  "isNew": false,
+  "img": "development/Per Instance Color.jpg"
+}, {
+  "name": "development/Pick From Ray",
+  "isNew": false,
+  "img": "development/Pick From Ray.jpg"
+}, {
+  "name": "development/Picking",
+  "isNew": false
+}, {
+  "name": "development/PointPrimitives",
+  "isNew": false,
+  "img": "development/PointPrimitives.jpg"
+}, {
+  "name": "development/Polygon",
+  "isNew": false,
+  "img": "development/Polygon.jpg"
+}, {
+  "name": "development/Polygon Outline",
+  "isNew": false,
+  "img": "development/Polygon Outline.jpg"
+}, {
+  "name": "development/Polyline",
+  "isNew": false,
+  "img": "development/Polyline.jpg"
+}, {
+  "name": "development/Polyline Color",
+  "isNew": false,
+  "img": "development/Polyline Color.jpg"
+}, {
+  "name": "development/Polyline Material",
+  "isNew": false,
+  "img": "development/Polyline Material.jpg"
+}, {
+  "name": "development/Polyline Volume",
+  "isNew": false,
+  "img": "development/Polyline Volume.jpg"
+}, {
+  "name": "development/Polyline Volume Outline",
+  "isNew": false,
+  "img": "development/Polyline Volume Outline.jpg"
+}, {
+  "name": "development/Polylines",
+  "isNew": false,
+  "img": "development/Polylines.jpg"
+}, {
+  "name": "development/Polylines On Terrain",
+  "isNew": false,
+  "img": "development/Polylines On Terrain.jpg"
+}, {
+  "name": "development/Rectangle",
+  "isNew": false,
+  "img": "development/Rectangle.jpg"
+}, {
+  "name": "development/Rectangle Outline",
+  "isNew": false,
+  "img": "development/Rectangle Outline.jpg"
+}, {
+  "name": "development/Shadows",
+  "isNew": false
+}, {
+  "name": "development/Simple Polyline",
+  "isNew": false,
+  "img": "development/Simple Polyline.jpg"
+}, {
+  "name": "development/Sphere",
+  "isNew": false,
+  "img": "development/Sphere.jpg"
+}, {
+  "name": "development/Sphere Outline",
+  "isNew": false,
+  "img": "development/Sphere Outline.jpg"
+}, {
+  "name": "development/Terrain Entity Batching",
+  "isNew": false,
+  "img": "development/Terrain Entity Batching.jpg"
+}, {
+  "name": "development/Terrain Performance",
+  "isNew": false
+}, {
+  "name": "development/Terrain Tweaks",
+  "isNew": false
+}, {
+  "name": "development/Volumes",
+  "isNew": false,
+  "img": "development/Volumes.jpg"
+}, {
+  "name": "development/Wall",
+  "isNew": false,
+  "img": "development/Wall.jpg"
+}, {
+  "name": "development/Wall Outline",
+  "isNew": false,
+  "img": "development/Wall Outline.jpg"
 }];
-var has_new_gallery_demos = true;
+var has_new_gallery_demos = false;

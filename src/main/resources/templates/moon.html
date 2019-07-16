@@ -6,77 +6,353 @@
     <!-- Tell IE to use the latest, best version. -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-    <title>Hello World!</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Moon</title>
     <!--<script src="../Build/CesiumUnminified/Cesium.js"></script>-->
-    <script src="res/cesium/Build/Cesium/Cesium.js"></script>
+    <script src="res/cesium/CesiumUnminified/Cesium.js"></script>
     <style>
-        @import url(res/cesium/Build/Cesium/Widgets/widgets.css);
+        @import url(res/cesium/CesiumUnminified/Widgets/widgets.css);
+        @import url(res/bootstrap/css/bootstrap.css);
         html, body, #cesiumContainer {
-            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #eye {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            bottom: 20px;
+            right: 10px;
+            z-index: 999;
+            background: black;
+            border: solid white 2px;
+        }
+
+        #toolbar {
+            position: absolute;
+            width: 300px;
+            height: 50px;
+            top: 20px;
+            left: 10px;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 <div id="cesiumContainer"></div>
 <div id="loadingIndicator" class="loadingIndicator"></div>
+<div id="eye"></div>
+<div id="toolbar">
+    <p>
+        <button type="button" class="btn btn-primary" onclick="moveModel(1)">前</button>
+        <button type="button" class="btn btn-primary" onclick="moveModel(0)">后</button>
+    </p>
+    <p>
+        <button type="button" class="btn btn-primary" onclick="rolateModel(1)">左</button>
+        <button type="button" class="btn btn-primary" onclick="rolateModel(0)">右</button>
+    </p>
+    <p>
+        <button type="button" class="btn btn-primary" onclick="testMove()">连续前进</button>
+    </p>
+</div>
 <script>
-    Cesium.Ion.defaultAccessToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZjA2ZDQ2ZS02NTA4LTQ2NTItODE1My1kZjE3MjBkMjFkNzAiLCJpZCI6NDM5NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0MDcyNzI4Nn0.L7P8pJponZfYjdsGnEw2hIHd2AN0h-SuYl6XvzOwLeA';
-    var objectDimensions = {
-        'x': 1737400.0,
-        'y': 1737400.0,
-        'z': 1735970.0
-    }
-    var ellipsoid = Cesium.freezeObject(new Cesium.Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
+    const appConfig = {
+            dimensions: {
+                'x': 1737400.0,
+                'y': 1737400.0,
+                'z': 1735970.0
+            },
+            model: {
+                url: "/res/3d/cs.glb",
+                lng: 30,
+                lat: 10,
+                height: 0,
+                heading: 0,
+                pitch: 0,
+                roll: 0,
+                headingOffset: 260,
+                step: 1000,
+                rotation: 45
+            },
+            terrainProvider: {
+                url: "http://192.168.31.178:8080/moon/terrian_tiles"
+            },
+            imageryProviders: [
+                {
+                    layerName: "UV_V2",
+                    url: "http://192.168.31.247:8080/viewer/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg",
+                    format: 'image/jpeg',
+                    layer: "USGSShadedReliefOnly",
+                    opacity:0.5,
+                    type: "1"
+                }
+            ]
+        }
+    ;
+    //const moonEllipsoid = Cesium.freezeObject(new Cesium.Ellipsoid(appConfig.dimensions.x, appConfig.dimensions.y, appConfig.dimensions.z));
+    const moonEllipsoid = Cesium.Ellipsoid.WGS84;
+    //Cesium.Ellipsoid.WGS84 = moonEllipsoid;
 
-    //Cesium.Ellipsoid.WGS84 = ellipsoid;
-    var globeParam = new Cesium.Globe(ellipsoid);
-    var mapProjectionParam = new Cesium.GeographicProjection(ellipsoid);
-    var terrainProviderParam = new Cesium.EllipsoidTerrainProvider({ellipsoid: ellipsoid});
-
-    var imageryProvider = new Cesium.WebMapServiceImageryProvider({
-        url: "https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/earth/moon_simp_cyl.map&",
-        parameters: {format: 'image/jpeg'},
-        layers: ["uv_v2"],
-        credit: 'USGS @ wms.wr.usgs.gov',
-        ellipsoid: ellipsoid,
-        enablePickFeatures: false
+    const terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: appConfig.terrainProvider.url,
+        requestVertexNormals: true,
+        ellipsoid: moonEllipsoid
     });
 
-    var viewerOptions = {
-        mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).
-        globe: globeParam, //  The globe to use in the scene. (class : Globe)
+    const viewerOptions = {
+        mapProjection: new Cesium.GeographicProjection(moonEllipsoid),
+        //globe: new Cesium.Globe(Cesium.Ellipsoid.WGS84),
         baseLayerPicker: false,
         selectionIndicator: false,
-        timeline: false, // for files which contains the temporal dimension
-        animation: false, // for animation which displayed with the time
+        timeline: false,
+        animation: false,
         navigationInstructionsInitiallyVisible: false,
         trashButton: true,
-        //showSystems: true,
-        //tools: true,
-        //VOData: true,
-        geocoder : false
+        terrainProvider: terrainProvider,
+        terrainExaggeration: 2,
+        geocoder: false,
+        skyAtmosphere: false,
+        skyBox: new Cesium.SkyBox({show: false})
     };
-    //viewerOptions.skyAtmosphere = new Cesium.SkyAtmosphere(ellipsoid, {show: false} ); // atm visualisation.
-    //viewerOptions.skyAtmosphere = false; // atm visualisation.
-    //viewerOptions.skyBox = new Cesium.SkyBox({show: false}); // star visualisation.
-    var viewer = new Cesium.Viewer('cesiumContainer',viewerOptions);
-    var scene = viewer.scene;
-    //var context = scene.context;
+
+    const modelConfig = appConfig.model;
+    let initPosition = Cesium.Cartesian3.fromDegrees(modelConfig.lng, modelConfig.lat, modelConfig.height, moonEllipsoid);
+    let initX = initPosition.x;
+    let initY = initPosition.y;
+    let initZ = initPosition.z;
+    console.log("x=" + initX + ",y=" + initY + ",z=" + initZ);
+    let initheading = modelConfig.heading;
+    let initpitch = modelConfig.pitch;
+    let initroll = modelConfig.roll;
+    let myModel;
 
 
-    //scene.globe.baseColor = Cesium.Color.BLACK;
+    function EagleEye(viewer, containerId) {
+        this._ref_viewer = viewer;
+        this._viewer = null;
+        this.init = function () {
+            let eagleEyeOptions = Cesium.clone(viewerOptions, false);
+            eagleEyeOptions.fullscreenButton = false;
+            eagleEyeOptions.homeButton = false;
+            eagleEyeOptions.timeline = false;
+            eagleEyeOptions.sceneModePicker = false;
+            eagleEyeOptions.navigationHelpButton = false;
+            eagleEyeOptions.infoBox = false;
+            eagleEyeOptions.navigationInstructionsInitiallyVisible = false;
+            this._viewer = new Cesium.Viewer(containerId, eagleEyeOptions);
+            this._viewer._cesiumWidget._creditContainer.style.display = "none";
+            let control = this._viewer.scene.screenSpaceCameraController;
+            let scene = this._viewer.scene;
+            scene.globe.showGroundAtmosphere = false;
+            scene.fog.enabled = false;
+            scene.moon.show = false;
+            scene.sun.show = false;
+            control.enableRotate = false;
+            control.enableTranslate = false;
+            control.enableZoom = false;
+            control.enableTilt = false;
+            control.enableLook = false;
+            let that = this;
+            this._ref_viewer.eagleEye = this;
+            this._ref_viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(0, 0),
+                label: {
+                    text: new Cesium.CallbackProperty(function () {
+                        that.synViewer();
+                        return "";
+                    }, true)
+                }
+            });
+        };
+        this.synViewer = function () {
+            this._viewer.camera.flyTo({
+                destination: createCartesian3(new Cesium.Cartesian3(initX, initY, initZ), moonEllipsoid, 500),
+                orientation: {
+                    heading: Cesium.Math.toRadians(getOffset(initheading)),
+                    pitch: Cesium.Math.toRadians(-30),
+                    roll: Cesium.Math.toRadians(0)
+                },
+                duration: 0.0
+            });
+        };
+        this.addImageryProvider = function(imageryProvider) {
+            this._viewer.imageryLayers.addImageryProvider(imageryProvider);
+        };
+    }
+
+    function rolateModel(v) {
+        const rotation = appConfig.model.rotation;
+        if (v === 0) {
+            if ((initheading + rotation) > 360) {
+                initheading = initheading + rotation - 360;
+            } else {
+                initheading = initheading + rotation;
+            }
+        } else {
+            if ((initheading - rotation) < 0) {
+                initheading = 360 + initheading - rotation;
+            } else {
+                initheading = initheading - rotation;
+            }
+        }
+        const position = new Cesium.Cartesian3(initX, initY, initZ);
+        console.log("initheading=" + initheading);
+        myModel.position = position;
+        myModel.orientation = Cesium.Transforms.headingPitchRollQuaternion(position, new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(initheading), initpitch, initroll));
+    }
+
+    function moveModel(v) {
+        var step = appConfig.model.step;
+        if (v === 0) {
+            step = -appConfig.model.step;
+        }
+        var xMargin = Math.cos(Cesium.Math.toRadians(getOffset(initheading))) * step;
+        var yMargin = Math.sin(Cesium.Math.toRadians(getOffset(initheading))) * step;
+        initX = initX + xMargin;
+        initY = initY + yMargin;
+        var xyz = new Cesium.Cartesian3(initX, initY, initZ);
+        //myModel.modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(createCartesian3(xyz, Cesium.Ellipsoid.WGS84, 0), new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(initheading), initpitch, initroll), Cesium.Ellipsoid.WGS84, Cesium.Transforms.eastNorthUpToFixedFrame, new Cesium.Matrix4());
+        console.log("initheading=" + initheading);
+
+        myModel.position = xyz;
+        myModel.orientation = Cesium.Transforms.headingPitchRollQuaternion(xyz, new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(initheading), initpitch, initroll));
+    }
+
+    /**
+     * 获取当前笛卡尔坐标，同时返回相同位置指定高度的笛卡尔坐标
+     * @param cartesian3 模型笛卡尔坐标
+     * @param ellipsoid 椭球体定义
+     * @param height 指定高度
+     * @returns 指定高度下同位置笛卡尔坐标
+     */
+    function createCartesian3(cartesian3, ellipsoid, height) {
+        const cartographic = ellipsoid.cartesianToCartographic(cartesian3);
+        const lat = Cesium.Math.toDegrees(cartographic.latitude);
+        const lng = Cesium.Math.toDegrees(cartographic.longitude);
+        return Cesium.Cartesian3.fromDegrees(lng, lat, height, ellipsoid);
+    }
 
 
-    //scene.fog.enabled = false;
-    //scene.moon.show = false;
-    //scene.sun.show = false;
-    viewer.imageryLayers.removeAll(true);
-    viewer.imageryLayers.addImageryProvider(imageryProvider);
+    function addImageryProviders(imageryProviderConfigs, viewer) {
+        if (imageryProviderConfigs == null || imageryProviderConfigs.length === 0) {
+            console.warn("未配置影像图层信息");
+        } else {
+            for (let i = 0; i < imageryProviderConfigs.length; i++) {
+                let providerConfig = imageryProviderConfigs[i];
+                //创建DIV 保存  设置透明度 TODO
+                const type = providerConfig.type == null ? "0" : providerConfig.type;
+                let imageryProvider;
+                switch(type) {
+                    case "0" :
+                        imageryProvider = new Cesium.WebMapServiceImageryProvider({
+                        url: providerConfig.url,
+                        parameters: {format: providerConfig.format},
+                        layers: providerConfig.layer,
+                        credit: 'USGS @ wms.wr.usgs.gov',
+                        ellipsoid: moonEllipsoid,
+                        enablePickFeatures: false
+                    });
+                        break;
+                    case "1":
+                        imageryProvider = new Cesium.WebMapTileServiceImageryProvider({
+                            url:providerConfig.url,
+                            layer : providerConfig.layer,
+                            style : 'default',
+                            format : providerConfig.format,
+                            tileMatrixSetID : 'default028mm',
+                            maximumLevel: 19,
+                            //tilingScheme:tilingScheme,
+                            credit: 'USGS @ wms.wr.usgs.gov',
+                            ellipsoid: moonEllipsoid,
+                            enablePickFeatures: false
+                        });
+                        break;
+                    default:
+                        imageryProvider = new Cesium.WebMapServiceImageryProvider({
+                            url: providerConfig.url,
+                            parameters: {format: providerConfig.format},
+                            layers: providerConfig.layers,
+                            credit: 'USGS @ wms.wr.usgs.gov',
+                            ellipsoid: moonEllipsoid,
+                            enablePickFeatures: false
+                        });
+                }
+                //viewer.imageryLayers.removeAll(true);
+                viewer.imageryLayers.addImageryProvider(imageryProvider);
+                if (Cesium.defined(viewer.eagleEye)) {
+                    viewer.eagleEye.addImageryProvider(imageryProvider);
+                }
+            }
+        }
+    }
+    function addModel(modelUrl, position, headingPitchRoll, ellipsoid, viewer) {
+        let model = viewer.entities.add({
+            name : modelUrl,
+            position : position,
+            orientation : Cesium.Transforms.headingPitchRollQuaternion(position, headingPitchRoll),
+            model : {
+                uri : modelUrl,
+                minimumPixelSize : 128,
+                maximumScale : 20000,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+            }
+        });
+        viewer.trackedEntity = model;
+        /*viewer.flyTo(model,{
+            duration: 0.5
+        });*/
+        return model;
+    }
 
+    function testMove() {
+        var timesRun = 0;
+        var interval = setInterval(function(){
+            timesRun += 1;
+            if(timesRun === 60){
+                clearInterval(interval);
+            }
+            moveModel(1);
+        }, 100);
+    }
 
+    window.onload = function(){
+        let viewer = new Cesium.Viewer('cesiumContainer', viewerOptions);
+        let scene = viewer.scene;
+        scene.globe.showGroundAtmosphere = false;
+        scene.fog.enabled = false;
+        scene.moon.show = false;
+        scene.sun.show = false;
+        viewer.extend(Cesium.viewerCesiumInspectorMixin);
+        //添加相机初始化
+        let eagleEye = new EagleEye(viewer, "eye");
+        eagleEye.init();
 
+        //添加图层
+        addImageryProviders(appConfig.imageryProviders, viewer);
 
+        //添加模型
+        myModel = addModel(modelConfig.url, initPosition, new Cesium.HeadingPitchRoll(initheading, initpitch, initroll), moonEllipsoid, viewer);
+
+    };
+
+    /**
+     * 计算模型方位偏移量
+     * @param heading 模型方位角
+     * @returns {number} 偏移后方位角
+     */
+    function getOffset(heading) {
+        var offset = appConfig.model.headingOffset;
+        if (heading < offset) {
+            return 360 + heading - offset;
+        } else {
+            return heading - offset;
+        }
+    }
 </script>
 </body>
 </html>

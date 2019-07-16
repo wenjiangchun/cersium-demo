@@ -3,7 +3,7 @@
 /*global gallery_demos, has_new_gallery_demos, hello_world_index*/// defined in gallery/gallery-index.js, created by build
 /*global sandcastleJsHintOptions*/// defined by jsHintOptions.js, created by build
 require({
-    baseUrl: '../../Source',
+    baseUrl: '../../../Source',
     packages: [{
         name: 'dojo',
         location: '../ThirdParty/dojo-release-1.10.4/dojo'
@@ -50,7 +50,7 @@ require({
         'dojo/query',
         'dojo/when',
         'Sandcastle/LinkButton',
-        'Source/Cesium',
+        'CesiumUnminified',
         'Source/Core/defined',
         'Source/Core/Resource',
         'ThirdParty/clipboard.min',
@@ -197,7 +197,7 @@ require({
     var bucketWaiting = false;
 
     xhr.get({
-        url : '../../Build/Documentation/types.txt',
+        url : '../../Documentation/types.txt',
         handleAs : 'json',
         error : function(error) {
             docError = true;
@@ -275,7 +275,7 @@ require({
                 var ele = document.createElement('a');
                 ele.target = '_blank';
                 ele.textContent = member.replace('.html', '').replace('module-', '').replace('#.', '.').replace('#', '.');
-                ele.href = '../../Build/Documentation/' + member;
+                ele.href = '../../Documentation/' + member;
                 ele.onclick = onDocClick;
                 docMessage.appendChild(ele);
             }

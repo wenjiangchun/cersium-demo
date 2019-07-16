@@ -8,10 +8,10 @@
     <meta name="cesium-sandcastle-labels" content="Showcases, Post Processing">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
     require.config({
-        baseUrl : '../../../Source',
+        baseUrl : '../../../../Source',
         waitSeconds : 60
     });
     </script>
@@ -53,7 +53,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 });
 
 var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706);
-var url = '../../SampleData/models/CesiumMan/Cesium_Man.glb';
+var url = '../../../../Apps/SampleData/models/CesiumMan/Cesium_Man.glb';
 viewer.trackedEntity = viewer.entities.add({
     name : url,
     position : position,

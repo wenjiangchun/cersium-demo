@@ -9,10 +9,10 @@
     <meta name="cesium-sandcastle-labels" content="Beginner, Showcases, Tutorials">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
         require.config({
-            baseUrl : '../../../Source',
+            baseUrl : '../../../../Source',
             waitSeconds : 60
         });
     </script>
@@ -75,7 +75,7 @@ snowSystem = new Cesium.ParticleSystem({
     emitter : new Cesium.SphereEmitter(snowRadius),
     startScale : 0.5,
     endScale : 1.0,
-    image : '../../SampleData/snowflake_particle.png',
+    image : '../../../../Apps/SampleData/snowflake_particle.png',
     emissionRate : 7000.0,
     startColor : Cesium.Color.WHITE.withAlpha(0.0),
     endColor : Cesium.Color.WHITE.withAlpha(1.0),
@@ -114,7 +114,7 @@ rainSystem = new Cesium.ParticleSystem({
     emitter : new Cesium.SphereEmitter(rainRadius),
     startScale : 1.0,
     endScale : 0.0,
-    image : '../../SampleData/circular_particle.png',
+    image : '../../../../Apps/SampleData/circular_particle.png',
     emissionRate : 9000.0,
     startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),
     endColor : new Cesium.Color(0.27, 0.5, 0.70, 0.98),

@@ -8,10 +8,10 @@
     <meta name="cesium-sandcastle-labels" content="Showcases, DataSources">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
     require.config({
-        baseUrl : '../../../Source',
+        baseUrl : '../../../../Source',
         waitSeconds : 60
     });
     </script>
@@ -36,7 +36,7 @@ var options = {
 
 var tour = null;
 viewer.dataSources.add(
-    Cesium.KmlDataSource.load('../../SampleData/kml/eiffel-tower-flyto.kml', options))
+    Cesium.KmlDataSource.load('../../../../Apps/SampleData/kml/eiffel-tower-flyto.kml', options))
 .then(function(dataSource) {
     tour = dataSource.kmlTours[0];
     tour.tourStart.addEventListener(function() {

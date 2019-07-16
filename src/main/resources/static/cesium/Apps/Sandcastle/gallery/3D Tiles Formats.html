@@ -8,10 +8,10 @@
     <meta name="cesium-sandcastle-labels" content="3D Tiles">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
     require.config({
-        baseUrl : '../../../Source',
+        baseUrl : '../../../../Source',
         waitSeconds : 60
     });
     </script>
@@ -45,46 +45,46 @@ var viewModel = {
     tilesets: [
         {
             name: 'Tileset',
-            resource: '../../SampleData/Cesium3DTiles/Tilesets/Tileset/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Tilesets/Tileset/tileset.json'
         }, {
             name: 'Translucent',
-            resource: '../../SampleData/Cesium3DTiles/Batched/BatchedTranslucent/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Batched/BatchedTranslucent/tileset.json'
         }, {
             name: 'Translucent/Opaque',
-            resource: '../../SampleData/Cesium3DTiles/Batched/BatchedTranslucentOpaqueMix/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Batched/BatchedTranslucentOpaqueMix/tileset.json'
         }, {
             name: 'Multi-color',
-            resource: '../../SampleData/Cesium3DTiles/Batched/BatchedColors/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Batched/BatchedColors/tileset.json'
         }, {
             name: 'Request Volume',
-            resource: '../../SampleData/Cesium3DTiles/Tilesets/TilesetWithViewerRequestVolume/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Tilesets/TilesetWithViewerRequestVolume/tileset.json'
         }, {
             name: 'Batched',
-            resource: '../../SampleData/Cesium3DTiles/Batched/BatchedWithBatchTable/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Batched/BatchedWithBatchTable/tileset.json'
         }, {
             name: 'Instanced',
-            resource: '../../SampleData/Cesium3DTiles/Instanced/InstancedWithBatchTable/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Instanced/InstancedWithBatchTable/tileset.json'
         }, {
             name: 'Instanced/Orientation',
-            resource: '../../SampleData/Cesium3DTiles/Instanced/InstancedOrientation/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Instanced/InstancedOrientation/tileset.json'
         }, {
             name: 'Composite',
-            resource: '../../SampleData/Cesium3DTiles/Composite/Composite/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/Composite/Composite/tileset.json'
         }, {
             name: 'PointCloud',
-            resource: '../../SampleData/Cesium3DTiles/PointCloud/PointCloudRGB/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudRGB/tileset.json'
         }, {
             name: 'PointCloudConstantColor',
-            resource: '../../SampleData/Cesium3DTiles/PointCloud/PointCloudConstantColor/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudConstantColor/tileset.json'
         }, {
             name: 'PointCloudNormals',
-            resource: '../../SampleData/Cesium3DTiles/PointCloud/PointCloudNormals/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudNormals/tileset.json'
         }, {
             name: 'PointCloudBatched',
-            resource: '../../SampleData/Cesium3DTiles/PointCloud/PointCloudBatched/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudBatched/tileset.json'
         }, {
             name: 'PointCloudDraco',
-            resource: '../../SampleData/Cesium3DTiles/PointCloud/PointCloudDraco/tileset.json'
+            resource: '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudDraco/tileset.json'
         }
     ],
     selectedTileset: undefined,

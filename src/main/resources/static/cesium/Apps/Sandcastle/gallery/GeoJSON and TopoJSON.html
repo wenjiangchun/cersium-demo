@@ -8,10 +8,10 @@
     <meta name="cesium-sandcastle-labels" content="Showcases, Tutorials, DataSources">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
     require.config({
-        baseUrl : '../../../Source',
+        baseUrl : '../../../../Source',
         waitSeconds : 60
     });
     </script>
@@ -31,12 +31,12 @@ var viewer = new Cesium.Viewer('cesiumContainer');
 
 //Example 1: Load with default styling.
 Sandcastle.addDefaultToolbarButton('Default styling', function() {
-    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('../../SampleData/ne_10m_us_states.topojson'));
+    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('../../../../Apps/SampleData/ne_10m_us_states.topojson'));
 });
 
 //Example 2: Load with basic styling options.
 Sandcastle.addToolbarButton('Basic styling', function() {
-    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('../../SampleData/ne_10m_us_states.topojson', {
+    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('../../../../Apps/SampleData/ne_10m_us_states.topojson', {
         stroke: Cesium.Color.HOTPINK,
         fill: Cesium.Color.PINK.withAlpha(0.5),
         strokeWidth: 3
@@ -48,7 +48,7 @@ Sandcastle.addToolbarButton('Custom styling', function() {
     //Seed the random number generator for repeatable results.
     Cesium.Math.setRandomNumberSeed(0);
 
-    var promise = Cesium.GeoJsonDataSource.load('../../SampleData/ne_10m_us_states.topojson');
+    var promise = Cesium.GeoJsonDataSource.load('../../../../Apps/SampleData/ne_10m_us_states.topojson');
     promise.then(function(dataSource) {
         viewer.dataSources.add(dataSource);
 

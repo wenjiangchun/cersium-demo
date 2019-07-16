@@ -9,10 +9,10 @@
     <meta name="cesium-sandcastle-labels" content="Beginner, Showcases, Tutorials">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
         require.config({
-            baseUrl : '../../../Source',
+            baseUrl : '../../../../Source',
             waitSeconds : 60
         });
     </script>
@@ -61,7 +61,7 @@ var hpr = new Cesium.HeadingPitchRoll(0.0, Cesium.Math.PI_OVER_TWO, 0.0);
 var orientation = Cesium.Transforms.headingPitchRollQuaternion(planePosition, hpr);
 var entity = viewer.entities.add({
     model : {
-        uri : '../../SampleData/models/CesiumAir/Cesium_Air.gltf',
+        uri : '../../../../Apps/SampleData/models/CesiumAir/Cesium_Air.gltf',
         scale : 3.5
     },
     position : planePosition,

@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <title>Hello World!</title>
     <!--<script src="../Build/CesiumUnminified/Cesium.js"></script>-->
-    <script src="res/cesium/Build/Cesium/Cesium.js"></script>
+    <script src="res/cesium/CesiumUnminified/Cesium.js"></script>
     <style>
-        @import url(res/cesium/Build/Cesium/Widgets/widgets.css);
+        @import url(res/cesium/CesiumUnminified/Widgets/widgets.css);
         html, body, #cesiumContainer {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
         }
@@ -58,14 +58,14 @@
         geocoder : false
     };
     //viewerOptions.skyAtmosphere = new Cesium.SkyAtmosphere(ellipsoid, {show: false} ); // atm visualisation.
-    viewerOptions.skyAtmosphere = false; // atm visualisation.
-    viewerOptions.skyBox = new Cesium.SkyBox({show: false}); // star visualisation.
+    //viewerOptions.skyAtmosphere = false; // atm visualisation.
+    //viewerOptions.skyBox = new Cesium.SkyBox({show: false}); // star visualisation.
     var viewer = new Cesium.Viewer('cesiumContainer',viewerOptions);
     var scene = viewer.scene;
     //var context = scene.context;
 
 
-    scene.globe.baseColor = Cesium.Color.BLACK;
+    //scene.globe.baseColor = Cesium.Color.BLACK;
 
 
     scene.fog.enabled = false;
@@ -75,7 +75,49 @@
     viewer.imageryLayers.addImageryProvider(imageryProvider);
 
 
+    var initPosition = Cesium.Cartesian3.fromDegrees(0, 0, 100.0);
+    var initX = initPosition.x;
+    var initY = initPosition.y;
+    var initZ = initPosition.z;
+    //var ellipsoid=viewer.scene.globe.ellipsoid;
 
+    var initheading = 0;
+    var initpitch = 0;
+    var initroll = 0;
+    var headingPitchRoll = new Cesium.HeadingPitchRoll(initheading, initpitch, initroll);
+    /*var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+        Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0));*/
+    var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(initPosition, headingPitchRoll, Cesium.Ellipsoid.WGS84, Cesium.Transforms.eastNorthUpToFixedFrame, new Cesium.Matrix4());
+    var model = scene.primitives.add(Cesium.Model.fromGltf({
+        id:"myModel",
+        //url : '/res/3d/tc.glb',
+        url : '/res/3d/tc1.glb',
+        //url : '/res/cesium/Apps/SampleData/models/GroundVehicle/GroundVehicle.glb',
+        modelMatrix : modelMatrix,
+        scale : 50.0,
+        shouldAnimate : false,
+        allowPicking:true
+    }));
+
+    viewer.camera.flyTo({
+        //destination :  Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 200.0), // 设置位置
+        destination :  initPosition,
+        orientation: {
+            heading : Cesium.Math.toRadians(20.0), // 方向
+            pitch : Cesium.Math.toRadians(-90.0),// 倾斜角度
+            roll : 0
+        }
+    });
+
+
+
+    function createCartesian3(cartesian3, ellipsoid, height) {
+        var cartographic=ellipsoid.cartesianToCartographic(cartesian3);
+        var lat=Cesium.Math.toDegrees(cartographic.latitude);
+        var lng=Cesium.Math.toDegrees(cartographic.longitude);
+        var alt=cartographic.height;
+        return Cesium.Cartesian3.fromDegrees(lng, lat, height);
+    }
 
 </script>
 </body>

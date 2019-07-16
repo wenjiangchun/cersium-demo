@@ -8,11 +8,11 @@
     <meta name="cesium-sandcastle-labels" content="Showcases">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
         if(typeof require === 'function') {
             require.config({
-                baseUrl : '../../../Source',
+                baseUrl : '../../../../Source',
                 waitSeconds : 120
             });
         }
@@ -43,11 +43,11 @@ var dates = [
 ];
 
 var uris = [
-    '../../SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/0.pnts',
-    '../../SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/1.pnts',
-    '../../SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/2.pnts',
-    '../../SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/3.pnts',
-    '../../SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/4.pnts'
+    '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/0.pnts',
+    '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/1.pnts',
+    '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/2.pnts',
+    '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/3.pnts',
+    '../../../../Apps/SampleData/Cesium3DTiles/PointCloud/PointCloudTimeDynamic/4.pnts'
 ];
 
 function dataCallback(interval, index) {

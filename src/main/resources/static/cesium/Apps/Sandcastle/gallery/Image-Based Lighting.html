@@ -8,10 +8,10 @@
     <meta name="cesium-sandcastle-labels" content="Showcases">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
     require.config({
-        baseUrl : '../../../Source',
+        baseUrl : '../../../../Source',
         waitSeconds : 60
     });
     </script>
@@ -39,8 +39,8 @@ function startup(Cesium) {
 //Sandcastle_Begin
 var viewer = new Cesium.Viewer('cesiumContainer');
 
-var environmentMapURL = '../../SampleData/EnvironmentMap/kiara_6_afternoon_2k_ibl.ktx';
-var modelURL = '../../SampleData/models/Pawns/Pawns.glb';
+var environmentMapURL = '../../../../Apps/SampleData/EnvironmentMap/kiara_6_afternoon_2k_ibl.ktx';
+var modelURL = '../../../../Apps/SampleData/models/Pawns/Pawns.glb';
 
 // This environment map was processed using Google's Filament project. To process your own:
 // 1 - Download the Filament release (https://github.com/google/filament/releases).

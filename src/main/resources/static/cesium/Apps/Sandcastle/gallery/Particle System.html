@@ -8,11 +8,11 @@
     <meta name="cesium-sandcastle-labels" content="Beginner, Showcases">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
         if(typeof require === 'function') {
             require.config({
-                baseUrl : '../../../Source',
+                baseUrl : '../../../../Source',
                 waitSeconds : 120
             });
         }
@@ -194,7 +194,7 @@ var entity = viewer.entities.add({
         stop : stop
     })]),
     model : {
-        uri : '../../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
+        uri : '../../../../Apps/SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
         minimumPixelSize : 64
     },
     viewFrom: new Cesium.Cartesian3(-100.0, 0.0, 100.0),
@@ -205,7 +205,7 @@ viewer.trackedEntity = entity;
 
 var scene = viewer.scene;
 var particleSystem = scene.primitives.add(new Cesium.ParticleSystem({
-    image : '../../SampleData/smoke.png',
+    image : '../../../../Apps/SampleData/smoke.png',
 
     startColor : Cesium.Color.LIGHTSEAGREEN.withAlpha(0.7),
     endColor : Cesium.Color.WHITE.withAlpha(0.0),

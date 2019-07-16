@@ -8,11 +8,11 @@
     <meta name="cesium-sandcastle-labels" content="Tutorials">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
         if(typeof require === 'function') {
             require.config({
-                baseUrl : '../../../Source',
+                baseUrl : '../../../../Source',
                 waitSeconds : 120
             });
         }
@@ -115,7 +115,7 @@ var speedVector = new Cesium.Cartesian3();
 var fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west');
 
 var planePrimitive = scene.primitives.add(Cesium.Model.fromGltf({
-    url : '../../SampleData/models/CesiumAir/Cesium_Air.glb',
+    url : '../../../../Apps/SampleData/models/CesiumAir/Cesium_Air.glb',
     modelMatrix : Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform),
     minimumPixelSize : 128
 }));

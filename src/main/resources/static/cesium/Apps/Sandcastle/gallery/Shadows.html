@@ -8,10 +8,10 @@
     <meta name="cesium-sandcastle-labels" content="Showcases">
     <title>Cesium Demo</title>
     <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script type="text/javascript" src="../../../ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="../../../CesiumUnminified/Cesium.js"></script>
     <script type="text/javascript">
     require.config({
-        baseUrl : '../../../Source',
+        baseUrl : '../../../../Source',
         waitSeconds : 60
     });
     </script>
@@ -44,7 +44,7 @@ var cesiumAir = viewer.entities.add({
     name : 'Cesium Air',
     height : 20.0,
     model : {
-        uri : '../../SampleData/models/CesiumAir/Cesium_Air.glb'
+        uri : '../../../../Apps/SampleData/models/CesiumAir/Cesium_Air.glb'
     }
 });
 
@@ -52,7 +52,7 @@ var groundVehicle = viewer.entities.add({
     name : 'Ground Vehicle',
     height : 0.0,
     model : {
-        uri : '../../SampleData/models/GroundVehicle/GroundVehicle.glb'
+        uri : '../../../../Apps/SampleData/models/GroundVehicle/GroundVehicle.glb'
     }
 });
 
@@ -60,7 +60,7 @@ var cesiumMan = viewer.entities.add({
     name : 'Cesium Man',
     height : 0.0,
     model : {
-        uri : '../../SampleData/models/CesiumMan/Cesium_Man.glb'
+        uri : '../../../../Apps/SampleData/models/CesiumMan/Cesium_Man.glb'
     }
 });
 
@@ -68,7 +68,7 @@ var woodTower = viewer.entities.add({
     name : 'Wood Tower',
     height : 0.0,
     model : {
-        uri : '../../SampleData/models/WoodTower/Wood_Tower.gltf'
+        uri : '../../../../Apps/SampleData/models/WoodTower/Wood_Tower.gltf'
     }
 });
 
@@ -76,7 +76,7 @@ var simpleCity = viewer.entities.add({
     name : 'Simple City',
     height : 0.0,
     model : {
-        uri : '../../SampleData/models/ShadowTester/Shadow_Tester_4.gltf'
+        uri : '../../../../Apps/SampleData/models/ShadowTester/Shadow_Tester_4.gltf'
     }
 });
 
