@@ -41,6 +41,9 @@
             left: 10px;
             z-index: 999;
         }
+        #layer_table {
+            color:white;
+        }
     </style>
 </head>
 <body>
@@ -53,12 +56,15 @@
         <button type="button" class="btn btn-primary" onclick="moveModel(0)">后</button>
     </p>
     <p>
-        <button type="button" class="btn btn-primary" onclick="rolateModel(1)">左</button>
-        <button type="button" class="btn btn-primary" onclick="rolateModel(0)">右</button>
+        <button type="button" class="btn btn-primary" onclick="rotateModel(1)">左</button>
+        <button type="button" class="btn btn-primary" onclick="rotateModel(0)">右</button>
     </p>
     <p>
         <button type="button" class="btn btn-primary" onclick="testMove()">连续前进</button>
     </p>
+        <table id="layer_table"><tbody>
+        </tbody>
+    </table>
 </div>
 <script>
     const appConfig = {
@@ -84,11 +90,12 @@
             },
             imageryProviders: [
                 {
-                    layerName: "UV_V2",
+                    layerName: "LRO_WAC_Mosaic_Global",
                     url: "http://192.168.31.247:8080/viewer/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg",
                     format: 'image/jpeg',
                     layer: "USGSShadedReliefOnly",
-                    opacity:0.5,
+                    tileMatrixSetID: "default028mm",
+                    maximumLevel: 19,
                     type: "1"
                 }
             ]
@@ -105,8 +112,8 @@
     });
 
     const viewerOptions = {
-        mapProjection: new Cesium.GeographicProjection(moonEllipsoid),
-        //globe: new Cesium.Globe(Cesium.Ellipsoid.WGS84),
+        //mapProjection: new Cesium.GeographicProjection(moonEllipsoid),
+        //globe: new Cesium.Globe(moonEllipsoid),
         baseLayerPicker: false,
         selectionIndicator: false,
         timeline: false,
@@ -114,21 +121,22 @@
         navigationInstructionsInitiallyVisible: false,
         trashButton: true,
         terrainProvider: terrainProvider,
-        terrainExaggeration: 2,
-        geocoder: false,
+        terrainExaggeration: 5,
         skyAtmosphere: false,
+        geocoder:false,
         skyBox: new Cesium.SkyBox({show: false})
     };
-
+    let viewModel = {};
+    let viewer;
     const modelConfig = appConfig.model;
     let initPosition = Cesium.Cartesian3.fromDegrees(modelConfig.lng, modelConfig.lat, modelConfig.height, moonEllipsoid);
-    let initX = initPosition.x;
-    let initY = initPosition.y;
-    let initZ = initPosition.z;
+    let initX = initPosition.x; //模型初始x
+    let initY = initPosition.y; //模型初始y
+    let initZ = initPosition.z; //模型初始z
     console.log("x=" + initX + ",y=" + initY + ",z=" + initZ);
-    let initheading = modelConfig.heading;
-    let initpitch = modelConfig.pitch;
-    let initroll = modelConfig.roll;
+    let initheading = modelConfig.heading;  //模型初始heading
+    let initpitch = modelConfig.pitch; //模型初始pitch
+    let initroll = modelConfig.roll; //模型初始roll
     let myModel;
 
 
@@ -136,7 +144,7 @@
         this._ref_viewer = viewer;
         this._viewer = null;
         this.init = function () {
-            let eagleEyeOptions = Cesium.clone(viewerOptions, false);
+            let eagleEyeOptions = viewerOptions;
             eagleEyeOptions.fullscreenButton = false;
             eagleEyeOptions.homeButton = false;
             eagleEyeOptions.timeline = false;
@@ -183,9 +191,13 @@
         this.addImageryProvider = function(imageryProvider) {
             this._viewer.imageryLayers.addImageryProvider(imageryProvider);
         };
+        this.getImageryLayers = function() {
+            return this._viewer.imageryLayers;
+        }
     }
 
-    function rolateModel(v) {
+    function rotateModel(v) {
+        //每次转向角度
         const rotation = appConfig.model.rotation;
         if (v === 0) {
             if ((initheading + rotation) > 360) {
@@ -207,20 +219,17 @@
     }
 
     function moveModel(v) {
-        var step = appConfig.model.step;
-        if (v === 0) {
-            step = -appConfig.model.step;
-        }
-        var xMargin = Math.cos(Cesium.Math.toRadians(getOffset(initheading))) * step;
-        var yMargin = Math.sin(Cesium.Math.toRadians(getOffset(initheading))) * step;
+        //每次移动距离
+        const step = v === 0 ? -appConfig.model.step : appConfig.model.step;
+        const xMargin = Math.cos(Cesium.Math.toRadians(getOffset(initheading))) * step;
+        const yMargin = Math.sin(Cesium.Math.toRadians(getOffset(initheading))) * step;
         initX = initX + xMargin;
         initY = initY + yMargin;
-        var xyz = new Cesium.Cartesian3(initX, initY, initZ);
+        const position = new Cesium.Cartesian3(initX, initY, initZ);
         //myModel.modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(createCartesian3(xyz, Cesium.Ellipsoid.WGS84, 0), new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(initheading), initpitch, initroll), Cesium.Ellipsoid.WGS84, Cesium.Transforms.eastNorthUpToFixedFrame, new Cesium.Matrix4());
         console.log("initheading=" + initheading);
-
-        myModel.position = xyz;
-        myModel.orientation = Cesium.Transforms.headingPitchRollQuaternion(xyz, new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(initheading), initpitch, initroll));
+        myModel.position = position;
+        myModel.orientation = Cesium.Transforms.headingPitchRollQuaternion(position, new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(initheading), initpitch, initroll));
     }
 
     /**
@@ -242,11 +251,12 @@
         if (imageryProviderConfigs == null || imageryProviderConfigs.length === 0) {
             console.warn("未配置影像图层信息");
         } else {
+            let layersHtml = document.getElementById("layer_table");
             for (let i = 0; i < imageryProviderConfigs.length; i++) {
                 let providerConfig = imageryProviderConfigs[i];
-                //创建DIV 保存  设置透明度 TODO
                 const type = providerConfig.type == null ? "0" : providerConfig.type;
                 let imageryProvider;
+                //根据不同type生成不同ImageryProvicer TODO 后续根据需要添加
                 switch(type) {
                     case "0" :
                         imageryProvider = new Cesium.WebMapServiceImageryProvider({
@@ -262,11 +272,10 @@
                         imageryProvider = new Cesium.WebMapTileServiceImageryProvider({
                             url:providerConfig.url,
                             layer : providerConfig.layer,
-                            style : 'default',
+                            style : Cesium.defined(providerConfig.style)? providerConfig.style : "default",
                             format : providerConfig.format,
-                            tileMatrixSetID : 'default028mm',
-                            maximumLevel: 19,
-                            //tilingScheme:tilingScheme,
+                            tileMatrixSetID : Cesium.defined(providerConfig.tileMatrixSetID)? providerConfig.tileMatrixSetID:'default028mm',
+                            maximumLevel: Cesium.defined(providerConfig.maximumLevel)? providerConfig.maximumLevel: 19,
                             credit: 'USGS @ wms.wr.usgs.gov',
                             ellipsoid: moonEllipsoid,
                             enablePickFeatures: false
@@ -282,14 +291,66 @@
                             enablePickFeatures: false
                         });
                 }
-                //viewer.imageryLayers.removeAll(true);
-                viewer.imageryLayers.addImageryProvider(imageryProvider);
+                if (i === 0) {
+                    viewer.imageryLayers.removeAll(true);
+                    if (Cesium.defined(viewer.eagleEye)) {
+                        viewer.eagleEye.getImageryLayers().removeAll(true);
+                    }
+                }
+                viewer.imageryLayers.addImageryProvider(imageryProvider, i);
                 if (Cesium.defined(viewer.eagleEye)) {
-                    viewer.eagleEye.addImageryProvider(imageryProvider);
+                    viewer.eagleEye.addImageryProvider(imageryProvider, i);
+                }
+                //创建图层控制信息
+                let tr = document.createElement('TR');
+                let nameTd = document.createElement('TD');
+                nameTd.appendChild(document.createTextNode(providerConfig.layerName));
+                tr.appendChild(nameTd);
+                let layerTd = document.createElement('TD');
+                let btnShowLayer = document.createElement('INPUT');
+                btnShowLayer.type = 'checkbox';
+                btnShowLayer.className = 'form-check-input';
+                btnShowLayer.setAttribute('data-bind', 'attr: { title:\"' + providerConfig.layerName + '\"},checked : show_' + i);
+                layerTd.appendChild(btnShowLayer);
+                tr.appendChild(layerTd);
+                let opaticyTd = document.createElement('TD');
+                let inputRange = document.createElement('INPUT');
+                inputRange.type = 'range';
+                inputRange.className = 'form-control-range';
+                inputRange.min = '0';
+                inputRange.max = '1';
+                inputRange.step = '0.05';
+                inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: \"input\"');
+                opaticyTd.appendChild(inputRange);
+                tr.appendChild(opaticyTd);
+                layersHtml.appendChild(tr);
+                if (i === 0) {
+                    viewModel['show_' + i] = Cesium.knockout.observable(true);
+                    viewModel['alpha_' + i] = Cesium.knockout.observable(1.0);
+                } else {
+                    viewModel['show_' + i] = Cesium.knockout.observable(false);
+                    viewModel['alpha_' + i] = Cesium.knockout.observable(0.5);
+                }
+            }
+            Cesium.knockout.track(viewModel);
+            Cesium.knockout.applyBindings(viewModel, layersHtml);
+            for (let name in viewModel) {
+                if (viewModel.hasOwnProperty(name)) {
+                    Cesium.knockout.getObservable(viewModel, name).subscribe(updatePostProcess);
                 }
             }
         }
     }
+
+    /**
+     * 添加模型信息
+     * @param modelUrl 模型URL
+     * @param position 模型位置
+     * @param headingPitchRoll 模型方位信息
+     * @param ellipsoid 椭球体定义
+     * @param viewer 目的cesium viewer
+     * @returns 添加后的cesium entity对象
+     */
     function addModel(modelUrl, position, headingPitchRoll, ellipsoid, viewer) {
         let model = viewer.entities.add({
             name : modelUrl,
@@ -310,8 +371,8 @@
     }
 
     function testMove() {
-        var timesRun = 0;
-        var interval = setInterval(function(){
+        let timesRun = 0;
+        let interval = setInterval(function(){
             timesRun += 1;
             if(timesRun === 60){
                 clearInterval(interval);
@@ -321,13 +382,13 @@
     }
 
     window.onload = function(){
-        let viewer = new Cesium.Viewer('cesiumContainer', viewerOptions);
+        viewer = new Cesium.Viewer('cesiumContainer', viewerOptions);
         let scene = viewer.scene;
         scene.globe.showGroundAtmosphere = false;
         scene.fog.enabled = false;
         scene.moon.show = false;
         scene.sun.show = false;
-        viewer.extend(Cesium.viewerCesiumInspectorMixin);
+        //viewer.extend(Cesium.viewerCesiumInspectorMixin);
         //添加相机初始化
         let eagleEye = new EagleEye(viewer, "eye");
         eagleEye.init();
@@ -336,8 +397,7 @@
         addImageryProviders(appConfig.imageryProviders, viewer);
 
         //添加模型
-        myModel = addModel(modelConfig.url, initPosition, new Cesium.HeadingPitchRoll(initheading, initpitch, initroll), moonEllipsoid, viewer);
-
+       myModel = addModel(modelConfig.url, initPosition, new Cesium.HeadingPitchRoll(initheading, initpitch, initroll), moonEllipsoid, viewer);
     };
 
     /**
@@ -346,11 +406,23 @@
      * @returns {number} 偏移后方位角
      */
     function getOffset(heading) {
-        var offset = appConfig.model.headingOffset;
+        const offset = appConfig.model.headingOffset;
         if (heading < offset) {
             return 360 + heading - offset;
         } else {
             return heading - offset;
+        }
+    }
+
+
+    function updatePostProcess() {
+        for (let i = 0; i < viewer.imageryLayers.length; i ++) {
+            viewer.imageryLayers.get(i).show = viewModel["show_" + i];
+            viewer.imageryLayers.get(i).alpha = viewModel["alpha_" + i];
+            if (Cesium.defined(viewer.eagleEye)) {
+                viewer.eagleEye.getImageryLayers.get(i).show = viewModel["show" + i];
+                viewer.eagleEye.getImageryLayers.get(i).alpha = viewModel["alpha_" + i];
+            }
         }
     }
 </script>
